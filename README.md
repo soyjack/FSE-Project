@@ -1,2 +1,2 @@
 # FSE-Project
-3rd year software project
+Library Management System Desktop App. [3rd year software project]
