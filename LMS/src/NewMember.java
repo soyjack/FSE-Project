@@ -199,5 +199,223 @@ public class NewMember extends JFrame {
 		phoneNoField.setBackground(Color.BLACK);
 		phoneNoField.setBounds(128, 239, 213, 20);
 		contentPane.add(phoneNoField);
+		
+		emailField = new JTextField();
+		emailField.setSelectionColor(new Color(255, 215, 0));
+		emailField.setOpaque(false);
+		emailField.setForeground(Color.BLACK);
+		emailField.setFont(new Font("Rockwell", Font.BOLD, 13));
+		emailField.setDisabledTextColor(Color.BLACK);
+		emailField.setColumns(10);
+		emailField.setCaretColor(Color.LIGHT_GRAY);
+		emailField.setBorder(UIManager.getBorder("CheckBox.border"));
+		emailField.setBackground(Color.BLACK);
+		emailField.setBounds(128, 272, 213, 20);
+		contentPane.add(emailField);
+		
+		JLabel label_9 = new JLabel("Sex:");
+		label_9.setHorizontalAlignment(SwingConstants.LEFT);
+		label_9.setForeground(new Color(0, 0, 51));
+		label_9.setFont(new Font("Rockwell Condensed", Font.PLAIN, 18));
+		label_9.setBounds(10, 338, 108, 22);
+		contentPane.add(label_9);
+		
+		JRadioButton radioMButton = new JRadioButton("Male");
+		radioMButton.setOpaque(false);
+		radioMButton.setForeground(new Color(0, 0, 51));
+		buttonGroup.add(radioMButton);
+		radioMButton.setFont(new Font("Tahoma", Font.BOLD, 11));
+		radioMButton.setBackground(Color.GRAY);
+		radioMButton.setBounds(130, 340, 60, 23);
+		contentPane.add(radioMButton);
+		
+		JRadioButton radioFButton = new JRadioButton("Female");
+		radioFButton.setOpaque(false);
+		radioFButton.setForeground(new Color(0, 0, 51));
+		buttonGroup.add(radioFButton);
+		radioFButton.setFont(new Font("Tahoma", Font.BOLD, 11));
+		radioFButton.setBackground(Color.GRAY);
+		radioFButton.setBounds(235, 340, 70, 23);
+		contentPane.add(radioFButton);
+		
+		JButton button = new JButton("Sign Up");
+		button.setBorder(UIManager.getBorder("Button.border"));
+		button.setForeground(new Color(0, 51, 51));
+		button.setFont(new Font("Sitka Display", Font.BOLD, 14));
+		button.setBackground(new Color(192, 192, 192));
+		button.setBounds(269, 426, 92, 27);
+		contentPane.add(button);
+		
+		JComboBox yearComboBox = new JComboBox();
+		yearComboBox.setBackground(Color.LIGHT_GRAY);
+		yearComboBox.setFont(new Font("Sitka Display", Font.BOLD, 12));
+		yearComboBox.setModel(new DefaultComboBoxModel(new String[] {"Entry-level", "Intermediate", "Mid-level", "Senior level"}));
+		yearComboBox.setBounds(128, 305, 213, 22);
+		contentPane.add(yearComboBox);
+		
+		JComboBox deptComboBox = new JComboBox();
+		deptComboBox.setFont(new Font("Sitka Display", Font.BOLD, 12));
+		deptComboBox.setBackground(Color.LIGHT_GRAY);
+		deptComboBox.setModel(new DefaultComboBoxModel(new String[] {"Central", "Social and Libral", "Master's", "Applied"}));
+		deptComboBox.setBounds(128, 201, 213, 22);
+		contentPane.add(deptComboBox);
+		
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String fname = fnameField.getText();
+				String lname = lnameField.getText();
+				String email = emailField.getText();
+				String pass = passField.getText();
+				String rePass = rePassField.getText();
+				String dept = deptComboBox.getSelectedItem().toString();
+				String year = yearComboBox.getSelectedItem().toString();
+				String phone = phoneNoField.getText();
+				String sex = null;
+				String user = userNameField.getText();
+				String id = idField.getText();
+				String admi = "no";
+				if(radioMButton.isSelected())
+					sex = "M";
+				else if(radioFButton.isSelected())
+					sex = "F";
+				
+				try {
+					String query = "INSERT INTO MEMBERS VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
+					PreparedStatement pst = con.prepareStatement(query);
+					if(fname.length() == 0) {
+						JOptionPane.showMessageDialog(null, "Please enter your first name", "Warning", 1);
+						return;
+					}else {
+						pst.setString(1, fname);
+					}
+					if(lname.length() == 0) {
+						JOptionPane.showMessageDialog(null, "Please enter your last name", "Warning", 1);
+						return;
+					}else {
+						pst.setString(2, lname);
+					}if(pass.length() == 0) {
+						JOptionPane.showMessageDialog(null, "Please enter your password", "Warning", 1);
+						return;
+					}else {
+						pst.setString(4, pass);
+					}
+					if(pass.equals(rePass)) {
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "Your password didn't match", "Warning", 1);
+						return;
+					}
+					pst.setString(5, dept);
+					pst.setString(6, year);
+				    String regexx = "[0-9]{9}";
+				   	if(phone.length() == 0) {
+						JOptionPane.showMessageDialog(null, "Please enter your phone number", "Warning", 1);
+						return;
+					}else if (!phone.matches(regexx)) {
+						JOptionPane.showMessageDialog(null, "Please enter valid phone number", "Warning", 1);
+						return;
+					}
+					else {
+						pst.setString(7, phone);
+					}
+					String regex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+					 
+					Pattern pattern = Pattern.compile(regex);
+					 
+					Matcher matcher = pattern.matcher(email);
+					boolean ans = matcher.matches();
+					if(email.length() == 0) {
+						JOptionPane.showMessageDialog(null, "Please enter your email address", "Warning", 1);
+						return;
+					}else if (!ans) {
+						JOptionPane.showMessageDialog(null, "Please enter valid email address", "Warning", 1);
+						return;
+					}
+					else {
+						pst.setString(3, email);
+					}
+					if(radioMButton.isSelected() || radioFButton.isSelected()) {
+						pst.setString(8, sex);
+					}else {
+						JOptionPane.showMessageDialog(null, "Please select your gender", "Warning", 1);
+						return;
+					}
+					if(user.length() == 0) {
+						JOptionPane.showMessageDialog(null, "Please enter your username", "Warning", 1);
+						return;
+					}else {
+						pst.setString(9, user);
+					}
+					if(id.length() == 0) {
+						JOptionPane.showMessageDialog(null, "Please enter your ID", "Warning", 1);
+						return;
+					}else {
+						pst.setString(10, id);
+					}
+					pst.setString(11, admi);
+					pst.setString(12, "Present");
+					pst.execute();
+					JOptionPane.showMessageDialog(null, String.format("Congrats %s, you have registered successfully!", fname),"Success", 1);
+					pst.close();
+					}
+				catch(java.sql.SQLIntegrityConstraintViolationException e2) {
+					JOptionPane.showMessageDialog(null, "This username belongs to another user. Please choose different username","Warning",1);
+				}
+				catch(Exception e1) {
+					JOptionPane.showMessageDialog(null, e1);
+				}
+			}
+		});
+		
+		JLabel lblWelcomeToAstu = new JLabel("Handy Library Management System");
+		lblWelcomeToAstu.setOpaque(true);
+		lblWelcomeToAstu.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWelcomeToAstu.setForeground(new Color(255, 102, 0));
+		lblWelcomeToAstu.setFont(new Font("Rockwell Condensed", Font.BOLD, 20));
+		lblWelcomeToAstu.setBorder(UIManager.getBorder("DesktopIcon.border"));
+		lblWelcomeToAstu.setBackground(new Color(0, 51, 51));
+		lblWelcomeToAstu.setBounds(10, 11, 357, 30);
+		contentPane.add(lblWelcomeToAstu);
+		
+		JLabel label_11 = new JLabel("ID:");
+		label_11.setHorizontalAlignment(SwingConstants.LEFT);
+		label_11.setForeground(new Color(0, 0, 51));
+		label_11.setFont(new Font("Rockwell Condensed", Font.PLAIN, 18));
+		label_11.setBounds(10, 400, 108, 22);
+		contentPane.add(label_11);
+		
+		idField = new JTextField();
+		idField.setSelectionColor(new Color(255, 215, 0));
+		idField.setOpaque(false);
+		idField.setForeground(Color.BLACK);
+		idField.setFont(new Font("Rockwell", Font.BOLD, 13));
+		idField.setDisabledTextColor(Color.BLACK);
+		idField.setColumns(10);
+		idField.setCaretColor(Color.LIGHT_GRAY);
+		idField.setBorder(UIManager.getBorder("CheckBox.border"));
+		idField.setBackground(Color.BLACK);
+		idField.setBounds(128, 401, 213, 20);
+		contentPane.add(idField);
+		
+		JButton btnBack = new JButton("Back");
+		btnBack.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				frameN.dispose();
+				LgIn l = new LgIn();
+				l.setVisible(true);
+				l.setLocationRelativeTo(null);
+			}
+		});
+		btnBack.setForeground(new Color(0, 51, 51));
+		btnBack.setFont(new Font("Sitka Display", Font.BOLD, 14));
+		btnBack.setBorder(UIManager.getBorder("Button.border"));
+		btnBack.setBackground(Color.LIGHT_GRAY);
+		btnBack.setBounds(20, 426, 92, 27);
+		contentPane.add(btnBack);
+		frameN.setVisible(true);
+	}
+}
+
   
-  }
+  
